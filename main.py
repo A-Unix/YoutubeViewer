@@ -95,11 +95,12 @@ def main():
             video_url = input(Fore.LIGHTCYAN_EX + "Enter the video URL (or 'quit' to exit): ")
 
             if video_url.lower() == 'quit':
+                print(Fore.LIGHTMAGENTA_EX + "If you liked this script, please consider sharing it with your friends and also giving a star to this repo :)")
                 break
 
             # Take user input for time duration
             try:
-                duration = float(input(Fore.LIGHTMAGENTA_EX + "Enter the time duration to watch the video (in seconds): "))
+                duration = float(input(Fore.LIGHTMAGENTA_EX + "Enter the time duration to watch the video(in seconds): "))
             except ValueError:
                 print(Fore.LIGHTRED_EX + "Invalid input. Please enter a valid duration in seconds.")
                 continue
