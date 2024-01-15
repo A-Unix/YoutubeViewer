@@ -60,12 +60,15 @@ if __name__ == "__main__":
 
 def is_tor_running():
     try:
-        print(Fore.LIGHTBLUE_EX + "Checking if Tor is already running or not!")
+        print(Fore.LIGHTYELLOW_EX + "Checking if Tor is already running or not!")
         # Check if the Tor service is running by attempting to create a controller
         with stem.control.Controller.from_port(port=9051) as controller:
             controller.authenticate()
             return True
+    except StemConnectionError:
+        return False
     except Exception as e:
+        print(f"An error occurred: {e}")
         return False
 
 def start_tor():
