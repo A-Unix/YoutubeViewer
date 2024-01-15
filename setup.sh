@@ -25,4 +25,6 @@ pip3 install stem
 apt install figlet lolcat tor -y
 
 echo -e "\nDone, run the 'main.py' file now!\n"
+
+echo -e "\nNote that to use 'main.py', Tor Browser should be already installed in your linux distro/OS.\n"
 sleep 2
