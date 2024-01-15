@@ -5,9 +5,24 @@ import os
 import subprocess
 import time
 import webbrowser
-from colorama import init, Fore
 from stem import SocketError
 from stem.control import Controller
+
+print("Checking if Colorama has been installed already or not!")
+
+time.sleep(2)
+
+# Check if Colorama has been already installed or not
+try:
+    from colorama import init, Fore
+    print(Fore.LIGHTMAGENTA_EX + "Colorama has been already installed, We have initialized it for you :)")
+    time.sleep(2)
+except ImportError:
+    print(Fore.RED + "Colorama has not been installed. Installing it...")
+    subprocess.run(["pip", "install", "colorama"], check=True)
+    from colorama import init, Fore
+    print(Fore.LIGHTMAGENTA_EX + "Done, Colorama has been installed.")
+    time.sleep(2)
 
 # Constants
 TOR_PORT = 9051
@@ -50,7 +65,10 @@ def is_tor_running():
 
 def start_tor():
     # Start the Tor service
-    subprocess.Popen(['tor'])
+    subprocess.Popen(['service', 'tor', 'start'])
+
+# Call the function to start Tor
+start_tor()
 
 def open_video(url, circuit):
     print(Fore.LIGHTYELLOW_EX + "Opening default browser using Tor...")
