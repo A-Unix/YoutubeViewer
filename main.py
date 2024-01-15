@@ -87,43 +87,47 @@ def main():
         print(Fore.LIGHTYELLOW_EX + "Starting Tor service...")
         start_tor()
         time.sleep(8)  # Wait for Tor to start
+    
+    try:
 
-    while True:
-        # Take user input for video URL
-        video_url = input(Fore.LIGHTCYAN_EX + "Enter the video URL (or 'quit' to exit): ")
+        while True:
+            # Take user input for video URL
+            video_url = input(Fore.LIGHTCYAN_EX + "Enter the video URL (or 'quit' to exit): ")
 
-        if video_url.lower() == 'quit':
-            break
+            if video_url.lower() == 'quit':
+                break
 
-        # Take user input for time duration
-        try:
-            duration = float(input(Fore.LIGHTMAGENTA_EX + "Enter the time duration to watch the video (in seconds): "))
-        except ValueError:
-            print(Fore.LIGHTRED_EX + "Invalid input. Please enter a valid duration in seconds.")
-            continue
+            # Take user input for time duration
+            try:
+                duration = float(input(Fore.LIGHTMAGENTA_EX + "Enter the time duration to watch the video (in seconds): "))
+            except ValueError:
+                print(Fore.LIGHTRED_EX + "Invalid input. Please enter a valid duration in seconds.")
+                continue
 
-        # Take user input for the number of tabs to open
-        try:
-            num_tabs = int(input(Fore.LIGHTYELLOW_EX + "Enter the number of tabs to open: "))
-        except ValueError:
-            print(Fore.RED + "Invalid input. Please enter a valid number of tabs.")
-            continue
+            # Take user input for the number of tabs to open
+            try:
+                num_tabs = int(input(Fore.LIGHTYELLOW_EX + "Enter the number of tabs to open: "))
+            except ValueError:
+                print(Fore.RED + "Invalid input. Please enter a valid number of tabs.")
+                continue
 
-        # Open the video in multiple tabs with different Tor circuits
-        for tab_number in range(1, num_tabs + 1):
-            circuit_name = f"tab_circuit_{tab_number}"
-            with stem.control.Controller.from_port(port=9051) as controller:
-                controller.authenticate()
-                controller.new_circuit(circuit_name, await_build=True)
-                controller.close_circuit(circuit_name)
+            # Open the video in multiple tabs with different Tor circuits
+            for tab_number in range(1, num_tabs + 1):
+                circuit_name = f"tab_circuit_{tab_number}"
+                with stem.control.Controller.from_port(port=9051) as controller:
+                    controller.authenticate()
+                    controller.new_circuit(circuit_name, await_build=True)
+                    controller.close_circuit(circuit_name)
 
-            # Open the video in the default web browser using the new Tor circuit
-            open_video(video_url, circuit_name)
+                # Open the video in the default web browser using the new Tor circuit
+                open_video(video_url, circuit_name)
 
-            # Watch the video for the specified duration
-            watch_video(duration)
+                # Watch the video for the specified duration
+                watch_video(duration)
+    except KeyboardInterrupt:
+        pass  # User interrupted with Ctrl+C
 
-    print(Fore.LIGHTMAGENTA_EX + "Exiting the script.")
+    print(Fore.LIGHTMAGENTA_EX + "Exiting the script...")
 
 if __name__ == "__main__":
     main()
