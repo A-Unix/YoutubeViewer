@@ -22,7 +22,7 @@ sleep 0.5
 
 # Install requirements to run the script
 pip3 install stem
-apt install figlet lolcat -y
+apt install figlet lolcat tor -y
 
 echo -e "\nDone, run the 'main.py' file now!\n"
 sleep 2
