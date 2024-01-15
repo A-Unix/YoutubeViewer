@@ -5,33 +5,13 @@ import os
 import subprocess
 import time
 import webbrowser
-import time
-import stem.process
+from colorama import init, Fore
+from stem import SocketError
+from stem.control import Controller
 
-print("Checking if Colorama has been installed already or not!")
+# Constants
+TOR_PORT = 9051
 
-time.sleep(2)
-
-# Check if Colorama has been already installed or not
-try:
-    from colorama import init, Fore
-    print(Fore.LIGHTMAGENTA_EX + "Colorama has been already installed, We have initialized it for you :)")
-    time.sleep(2)
-except ImportError:
-    print(Fore.RED + "Colorama has not been installed. Installing it...")
-    subprocess.run(["pip", "install", "colorama"], check=True)
-    from colorama import init, Fore
-    print(Fore.LIGHTMAGENTA_EX + "Done, Colorama has been installed.")
-    time.sleep(2)
-
-# Initialize colorama
-init(autoreset=True)
-
-# Clear the terminal screen
-os.system("clear")
-time.sleep(1)
-
-# Create 3D banner for showcase
 def create_3d_banner():
     # Banner text
     banner_text = "YOUTUBE VIEWER"
@@ -52,23 +32,20 @@ def create_3d_banner():
         print(banner_output.decode("utf-8"))
 
     except FileNotFoundError:
-        print(Fore.LIGHTRED_EX + "Error: Make sure 'figlet' and 'lolcat' are installed on your system.(Hint: Run ./setup.sh)")
+        print(Fore.LIGHTRED_EX + "Error: Make sure 'figlet' and 'lolcat' are installed on your system. (Hint: Run ./setup.sh)")
         time.sleep(2)
-
-if __name__ == "__main__":
-    create_3d_banner()
 
 def is_tor_running():
     try:
         print(Fore.LIGHTYELLOW_EX + "Checking if Tor is already running or not!")
         # Check if the Tor service is running by attempting to create a controller
-        with stem.control.Controller.from_port(port=9051) as controller:
+        with Controller.from_port(port=TOR_PORT) as controller:
             controller.authenticate()
             return True
-    except StemConnectionError:
+    except SocketError:
         return False
     except Exception as e:
-        print(f"An error occurred: {e}")
+        print(Fore.LIGHTRED_EX + f"An error occurred: {e}")
         return False
 
 def start_tor():
@@ -92,7 +69,6 @@ def main():
         time.sleep(8)  # Wait for Tor to start
     
     try:
-
         while True:
             # Take user input for video URL
             video_url = input(Fore.LIGHTCYAN_EX + "Enter the video URL (or 'quit' to exit): ")
@@ -103,7 +79,7 @@ def main():
 
             # Take user input for time duration
             try:
-                duration = float(input(Fore.LIGHTMAGENTA_EX + "Enter the time duration to watch the video(in seconds): "))
+                duration = float(input(Fore.LIGHTMAGENTA_EX + "Enter the time duration to watch the video (in seconds): "))
             except ValueError:
                 print(Fore.LIGHTRED_EX + "Invalid input. Please enter a valid duration in seconds.")
                 continue
@@ -118,7 +94,7 @@ def main():
             # Open the video in multiple tabs with different Tor circuits
             for tab_number in range(1, num_tabs + 1):
                 circuit_name = f"tab_circuit_{tab_number}"
-                with stem.control.Controller.from_port(port=9051) as controller:
+                with Controller.from_port(port=TOR_PORT) as controller:
                     controller.authenticate()
                     controller.new_circuit(circuit_name, await_build=True)
                     controller.close_circuit(circuit_name)
@@ -134,4 +110,14 @@ def main():
     print(Fore.LIGHTMAGENTA_EX + "Exiting the script...")
 
 if __name__ == "__main__":
+    # Initialize colorama
+    init(autoreset=True)
+
+    # Clear the terminal screen
+    os.system("clear")
+    time.sleep(1)
+
+    # Create 3D banner for showcase
+    create_3d_banner()
+
     main()
