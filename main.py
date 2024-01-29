@@ -1,31 +1,32 @@
 #!/usr/bin/python3
 
-import sys
-import os
-import subprocess
 import time
-import webbrowser
+import subprocess
+import os
+import sys
+from selenium import webdriver
+from selenium.webdriver.firefox.options import Options
 from stem import SocketError
 from stem.control import Controller
 
-print("Checking if Colorama has been installed already or not!")
-
-time.sleep(2)
+# Constants
+TOR_PORT = 9051
 
 # Check if Colorama has been already installed or not
 try:
     from colorama import init, Fore
     print(Fore.LIGHTMAGENTA_EX + "Colorama has been already installed, We have initialized it for you :)")
-    time.sleep(2)
+    time.sleep(5)
 except ImportError:
     print(Fore.RED + "Colorama has not been installed. Installing it...")
     subprocess.run(["pip", "install", "colorama"], check=True)
     from colorama import init, Fore
     print(Fore.LIGHTMAGENTA_EX + "Done, Colorama has been installed.")
-    time.sleep(2)
+    time.sleep(3)
 
-# Constants
-TOR_PORT = 9051
+# Clear the terminal screen
+    os.system("clear")
+    time.sleep(1)
 
 def create_3d_banner():
     # Banner text
@@ -34,7 +35,7 @@ def create_3d_banner():
     try:
         # Use figlet to create ASCII art with mono9 font
         figlet_process = subprocess.Popen(
-            ["figlet", "-f", "mono9", banner_text],
+            ["figlet", "-w", "36", "-f", "mono9", "-c", banner_text],
             stdout=subprocess.PIPE
         )
         figlet_output, _ = figlet_process.communicate()
@@ -71,9 +72,40 @@ def start_tor():
 start_tor()
 
 def open_video(url, circuit):
-    print(Fore.LIGHTYELLOW_EX + "Opening default browser using Tor...")
-    # Open the video URL in the default web browser using the provided Tor circuit
-    webbrowser.get(using='tor_browser').open(url, new=2, autoraise=True)
+    print(Fore.LIGHTYELLOW_EX + f"Opening video: {url} using Tor circuit: {circuit} in the background...")
+
+    # Configure the headless Firefox browser
+    options = Options()
+    options.headless = True
+
+    # Set up the Tor SOCKS proxy
+    tor_proxy = "socks5://localhost:9050"  # Tor proxy address
+    capabilities = webdriver.DesiredCapabilities.FIREFOX
+    capabilities['proxy'] = {
+        'proxyType': 'MANUAL',
+        'httpProxy': tor_proxy,
+        'ftpProxy': tor_proxy,
+        'sslProxy': tor_proxy,
+        'noProxy': ''  # bypass proxy for localhost
+    }
+
+    # Take user input for the path of Geckodriver
+    executable_paths = input(Fore.LIGHTCYAN_EX + "Enter the path of Gecko Driver e.g., /path/to/geckodriver: ")
+
+    # Create a headless Firefox browser instance
+    browser = webdriver.Firefox(options=options, executable_path=executable_paths, capabilities=capabilities)
+
+    try:
+        # Open the URL in the background
+        browser.get(url)
+
+        # Simulate some interactions if needed
+        # For example, you can wait for a few seconds
+        time.sleep(5)
+
+    finally:
+        # Close the browser
+        browser.quit()
 
 def watch_video(duration):
     # Wait for the specified duration
@@ -101,7 +133,7 @@ def main():
             except ValueError:
                 print(Fore.LIGHTRED_EX + "Invalid input. Please enter a valid duration in seconds.")
                 continue
-
+    
             # Take user input for the number of tabs to open
             try:
                 num_tabs = int(input(Fore.LIGHTYELLOW_EX + "Enter the number of tabs to open: "))
@@ -117,7 +149,7 @@ def main():
                     controller.new_circuit(circuit_name, await_build=True)
                     controller.close_circuit(circuit_name)
 
-                # Open the video in the default web browser using the new Tor circuit
+                # Open the video in the background using the new Tor circuit
                 open_video(video_url, circuit_name)
 
                 # Watch the video for the specified duration
@@ -128,13 +160,7 @@ def main():
     print(Fore.LIGHTMAGENTA_EX + "Exiting the script...")
 
 if __name__ == "__main__":
-    # Initialize colorama
-    init(autoreset=True)
-
-    # Clear the terminal screen
-    os.system("clear")
-    time.sleep(1)
-
+    
     # Create 3D banner for showcase
     create_3d_banner()
 
