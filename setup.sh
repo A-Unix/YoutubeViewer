@@ -26,5 +26,6 @@ pip3 install selenium
 apt install figlet lolcat tor -y
 
 echo -e "\nDone, run the 'main.py' file now!\n"
+echo -e "\nNote that you need to download 'Gecko Driver' which is compatible with your Linux OS before using 'main.py'."
 sleep 2
 
