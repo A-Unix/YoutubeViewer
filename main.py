@@ -10,7 +10,7 @@ from stem import SocketError
 from stem.control import Controller
 
 # Constants
-TOR_PORT = 9050
+TOR_PORT = 9051
 
 # Check if Colorama has been already installed or not
 try:
@@ -50,6 +50,7 @@ def create_3d_banner():
     except FileNotFoundError:
         print(Fore.LIGHTRED_EX + "Error: Make sure 'figlet' and 'lolcat' are installed on your system. (Hint: Run ./setup.sh)")
         time.sleep(2)
+print(Fore.LIGHTCYAN_EX + "Note that you need to download 'Gecko Driver' which is compatible with your Linux OS before using 'main.py'.")
 
 def is_tor_running():
     try:
@@ -129,14 +130,14 @@ def main():
 
             # Take user input for time duration
             try:
-                duration = float(input(Fore.LIGHTMAGENTA_EX + "Enter the time duration to watch the video (in seconds): "))
+                duration = float(input(Fore.LIGHTMAGENTA_EX + "Enter the time duration to watch the video(in seconds): "))
             except ValueError:
                 print(Fore.LIGHTRED_EX + "Invalid input. Please enter a valid duration in seconds.")
                 continue
     
             # Take user input for the number of tabs to open
             try:
-                num_tabs = int(input(Fore.LIGHTYELLOW_EX + "Enter the number of tabs to open: "))
+                num_tabs = int(input(Fore.LIGHTYELLOW_EX + "Enter the number of tabs to open e.g., 1, 2, 3: "))
             except ValueError:
                 print(Fore.RED + "Invalid input. Please enter a valid number of tabs.")
                 continue
@@ -147,13 +148,15 @@ def main():
                 with Controller.from_port(port=TOR_PORT) as controller:
                     controller.authenticate()
                     controller.new_circuit(circuit_name, await_build=True)
+                    # Open the video in the background using the new Tor circuit
+                    open_video(video_url, circuit_name)
+                    # Watch the video for the specified duration 
+                    watch_video(duration)
+                # Close the circuit after watching the video
+                with Controller.from_port(port=TOR_PORT) as controller:
+                    controller.authenticate()
                     controller.close_circuit(circuit_name)
 
-                # Open the video in the background using the new Tor circuit
-                open_video(video_url, circuit_name)
-
-                # Watch the video for the specified duration
-                watch_video(duration)
     except KeyboardInterrupt:
         pass  # User interrupted with Ctrl+C
 
