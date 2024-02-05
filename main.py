@@ -10,7 +10,7 @@ from stem import SocketError
 from stem.control import Controller
 
 # Constants
-TOR_PORT = 9051
+TOR_PORT = 9050
 
 # Check if Colorama has been already installed or not
 try:
