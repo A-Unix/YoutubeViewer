@@ -35,7 +35,7 @@ def create_3d_banner():
     try:
         # Use figlet to create ASCII art with mono9 font
         figlet_process = subprocess.Popen(
-            ["figlet", "-w", "36", "-f", "mono9", "-c", banner_text],
+            ["figlet", "-w", "27", "-f", "mono9", "-c", banner_text],
             stdout=subprocess.PIPE
         )
         figlet_output, _ = figlet_process.communicate()
