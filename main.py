@@ -51,6 +51,7 @@ def create_3d_banner():
         print(Fore.LIGHTRED_EX + "Error: Make sure 'figlet' and 'lolcat' are installed on your system. (Hint: Run ./setup.sh)")
         time.sleep(2)
 print(Fore.LIGHTCYAN_EX + "Note that you need to download 'Gecko Driver' which is compatible with your Linux OS before using 'main.py'.")
+time.sleep(8)
 
 def is_tor_running():
     try:
