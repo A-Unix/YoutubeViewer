@@ -45,7 +45,7 @@ def create_3d_banner():
         banner_output, _ = lolcat_process.communicate(input=figlet_output)
 
         # Print the result
-        print(banner_output.decode("utf-8"))
+        print(banner_output.decode())
 
     except FileNotFoundError:
         print(Fore.LIGHTRED_EX + "Error: Make sure 'figlet' and 'lolcat' are installed on your system. (Hint: Run ./setup.sh)")
@@ -163,7 +163,7 @@ def main():
     except KeyboardInterrupt:
         pass  # User interrupted with Ctrl+C
 
-    print(Fore.LIGHTMAGENTA_EX + "Exiting the script...")
+    print(Fore.LIGHTMAGENTA_EX + "If you want that I should use an external browser in the script, then, vote using stars on this repo. Exiting the script...")
 
 if __name__ == "__main__":
     # Create 3D banner for showcase
